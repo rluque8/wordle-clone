@@ -92,4 +92,4 @@ describe('computeGuess', () => {
       LetterState.Match,
     ]);
   });
-})
+});

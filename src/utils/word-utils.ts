@@ -1,6 +1,8 @@
 import wordBank from "../word-bank.json";
 
-export const getTodaysWord = () => {
+const word = getTodaysWord();
+
+export function getTodaysWord() {
   const randomIndex = Math.floor(Math.random() * wordBank.valid.length);
   return wordBank.valid[randomIndex];
 }
@@ -11,7 +13,7 @@ export enum LetterState {
   Match,
 }
 
-export function computeGuess(guess: string, answer: string): LetterState[] {
+export function computeGuess(guess: string, answer: string = word): LetterState[] {
   const result: LetterState[] = [];
 
   if (answer.length !== guess.length) return result;
