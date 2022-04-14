@@ -5,7 +5,8 @@ import { getTodaysWord } from "./utils/word-utils";
 interface StoreState {
   answer: string;
   guesses: string[];
-  addGuess: (guess: string) => void
+  addGuess: (guess: string) => void;
+  newGame: () => void;
 }
 
 export const useStore = create<StoreState>(persist(
@@ -16,6 +17,12 @@ export const useStore = create<StoreState>(persist(
       set(state => ({
         guesses: [...state.guesses, guess],
       }))
+    },
+    newGame: () => {
+      set({
+        answer: getTodaysWord(),
+        guesses: [],
+      })
     }
   }),
   {
