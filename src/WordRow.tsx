@@ -5,14 +5,26 @@ interface WordRowProps {
 }
 
 export default function WordRow({ letters: lettersProp = '' }: WordRowProps) {
-  const lettersRemaining = LETTER_LENGTH - letters.length;
+  const lettersRemaining = LETTER_LENGTH - lettersProp.length;
   // If we only have written 3 letters, the remaining 2 will be filled with '' in the array
-  const letters = lettersProp.split('').concat(Array(lettersRemaining)).fill('');
+  const letters: string[] = lettersProp.split('').concat(Array(lettersRemaining)).fill('');
   return (
-    <div>{letters.map((char) => (
-      <span key={char} className="inline-block mx-1">
-        {char}
-      </span>
-    ))}</div>
+    <div className="grid grid-cols-5 gap-4">
+      {letters.map((char: string) => (
+        <CharacterBox key={char} value={char} />
+      ))}
+    </div>
   )
+}
+
+interface CharacterBoxProps {
+  value: string;
+}
+
+function CharacterBox({ value }: CharacterBoxProps) {
+  return (
+    <div className="inline-block border-2 border-gray-500 p-4 uppercase font-bold text-2xl text-center">
+      {value}
+    </div>
+  );
 }

@@ -10,6 +10,8 @@ export default function App() {
       </header>
       <main>
         <WordRow letters="hel" />
+        <WordRow letters="hell" />
+        <WordRow letters="hello" />
       </main>
     </div>
   )
