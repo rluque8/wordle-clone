@@ -1,10 +1,15 @@
 import create from "zustand";
 import { persist } from "zustand/middleware";
-import { getTodaysWord } from "./utils/word-utils";
+import { computeGuess, getTodaysWord, LetterState } from "./utils/word-utils";
+
+interface GuessRow {
+  guess: string;
+  result?: LetterState[];
+}
 
 interface StoreState {
   answer: string;
-  guesses: string[];
+  rows: GuessRow[];
   addGuess: (guess: string) => void;
   newGame: () => void;
 }
@@ -12,16 +17,22 @@ interface StoreState {
 export const useStore = create<StoreState>(persist(
   (set, get) => ({
     answer: getTodaysWord(),
-    guesses: ['hello', 'solar', 'penny'],
+    rows: [],
     addGuess: (guess: string) => {
       set(state => ({
-        guesses: [...state.guesses, guess],
+        rows: [
+          ...state.rows,
+          {
+            guess,
+            result: computeGuess(guess, state.answer),
+          }
+        ],
       }))
     },
     newGame: () => {
       set({
         answer: getTodaysWord(),
-        guesses: [],
+        rows: [],
       })
     }
   }),

@@ -5,6 +5,8 @@ export function getTodaysWord() {
   return wordBank.valid[randomIndex];
 }
 
+export const LETTER_LENGTH = 5;
+
 export enum LetterState {
   Miss,
   Present,

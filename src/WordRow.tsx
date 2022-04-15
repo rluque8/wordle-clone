@@ -1,25 +1,20 @@
-import { useStore } from "./store";
-import { computeGuess, LetterState } from "./utils/word-utils";
-
-export const LETTER_LENGTH = 5;
+import { LetterState, LETTER_LENGTH } from "./utils/word-utils";
 
 interface WordRowProps {
   letters: string;
+  result?: LetterState[];
 }
 
-export default function WordRow({ letters: lettersProp = '' }: WordRowProps) {
-  const answer = useStore(state => state.answer);
+export default function WordRow({ letters: lettersProp = '', result = [] }: WordRowProps) {
   const lettersRemaining = LETTER_LENGTH - lettersProp.length;
 
-  // If we only have written 3 letters, the remaining 2 will be filled with '' in the array
+  // If we only have written 3 letteb rs, the remaining 2 will be filled with '' in the array
   const letters: string[] = lettersProp.split('').concat(Array(lettersRemaining)).fill('');
   
-  const guessStates = computeGuess(lettersProp, answer);
-
   return (
     <div className="grid grid-cols-5 gap-4">
       {letters.map((char: string, index: number) => (
-        <CharacterBox key={index} value={char} state={guessStates[index]} />
+        <CharacterBox key={index} value={char} state={result[index]} />
       ))}
     </div>
   )
