@@ -1,23 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { GUESS_LENGTH, useStore } from './store';
 import { LETTER_LENGTH } from './utils/word-utils';
 import WordRow from './WordRow';
 
 export default function App() {
   const state = useStore();
-  const [guess, setGuess] = useState('');
-
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newGuess = event.target.value;
-
-    if (newGuess.length === LETTER_LENGTH) {
-      state.addGuess(newGuess);
-      setGuess('');
-      return;
-    }
-
-    setGuess(newGuess);
-  }
+  const [guess, setGuess] = useGuess();
 
   let rows = [...state.rows];
 
@@ -36,16 +24,6 @@ export default function App() {
     <div className='mx-auto w-96 relative'>
       <header className='border-b border-gray-500 pb-2 my-2'>
         <h1 className="text-4xl text-center">Cifras</h1>
-
-        <div>
-          <input
-            type="text"
-            className='w-1/2 p-2 border-2 border-gray-500'
-            value={guess}
-            onChange={onChange}
-            disabled={isGameOver}
-          />
-        </div>
       </header>
 
       <main className='grid grid-rows-6 gap-4'>
@@ -70,4 +48,63 @@ export default function App() {
       )}
     </div>
   )
+}
+
+function useGuess(): [string, React.Dispatch<React.SetStateAction<string>>] {
+  const addGuess =  useStore(s => s.addGuess);
+  const [guess, setGuess] = useState('');
+  const previousGuess = usePrevious(guess);
+
+  const onKeyDown = (event: KeyboardEvent) => {
+    let letter = event.key;
+    setGuess((currentGuess) => {
+      const newGuess = letter.length === 1 ? currentGuess + letter : currentGuess;
+
+      switch (letter) {
+        case 'Backspace': {
+          return newGuess.slice(0, -1);
+        }
+        case 'Enter': {
+          if (newGuess.length === LETTER_LENGTH) {
+            addGuess(newGuess);
+            return '';
+          }
+          return newGuess.slice(0, -1);
+        }
+      }
+
+      if (currentGuess.length === LETTER_LENGTH) {
+        return currentGuess;
+      }
+
+      return newGuess;
+    });
+  }
+
+  useEffect(() => {
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+    }
+  },[]);
+
+  useEffect(() => {
+    if (guess.length === 0 && previousGuess?.length === LETTER_LENGTH) {
+      addGuess(previousGuess);
+    }
+  }, [guess]);
+
+  return [guess, setGuess];
+}
+
+function usePrevious<T>(value: T): T {
+  // The ref object is a generic container whose current property is mutable ...
+  // ... and can hold any value, similar to an instance property on a class
+  const ref: any = useRef<T>();
+  // Store current value in ref
+  useEffect(() => {
+    ref.current = value;
+  }, [value]); // Only re-run if value changes
+  // Return previous value (happens before update in useEffect above)
+  return ref.current;
 }
