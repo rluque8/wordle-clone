@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import Keyboard from './Keyboard';
 import { GUESS_LENGTH, useStore } from './store';
 import { isValidWord, LETTER_LENGTH } from './utils/word-utils';
 import WordRow from './WordRow';
@@ -50,6 +51,8 @@ export default function App() {
       <header className='border-b border-gray-500 pb-2 my-2'>
         <h1 className="text-4xl text-center">Cifras</h1>
       </header>
+
+      <Keyboard />
 
       <main className='grid grid-rows-6 gap-4'>
         {rows.map(({ guess, result }, index) => {
