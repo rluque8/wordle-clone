@@ -63,3 +63,7 @@ function letterCounter(word: string) {
 
   return letterCountStorage;
 }
+
+export function isValidWord(word: string): boolean {
+  return wordBank.valid.includes(word);
+}

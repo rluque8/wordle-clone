@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { computeGuess, getTodaysWord, LetterState } from './word-utils'
+import { computeGuess, getTodaysWord, isValidWord, LetterState } from './word-utils'
 
 describe('Word-utils', () => {
   it('get random word', () => {
     const wordSelected = getTodaysWord();
     expect(wordSelected.length).toEqual(5);
   });
-})
+});
 
 describe('computeGuess', () => {
   it('returns empty when length mismatch', () => {
@@ -93,3 +93,13 @@ describe('computeGuess', () => {
     ]);
   });
 });
+
+describe('isValidWord', () => {
+  it('works with a valid word', () => {
+    expect(isValidWord('boost')).toBe(true);
+  });
+
+  it('works with an invalid word', () => {
+    expect(isValidWord('abcde')).toBe(false);
+  });
+})
