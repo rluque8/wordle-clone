@@ -1,4 +1,11 @@
-export default function Keyboard() {
+import React from "react";
+
+export default function Keyboard({ onClick: onClickProp }: { onClick: (letter: string) => void }) {
+
+  const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const letter = e.currentTarget.textContent;
+    onClickProp(letter!);
+  }
 
   return (
     <div className="flex flex-col">
@@ -9,8 +16,12 @@ export default function Keyboard() {
               let styles = 'rounded font-bold uppercase py-2 flex-1';
               if (key !== '') {
                 styles += ' bg-gray-400';
+              } else {
+                styles += ' pointer-events-none';
               }
-              return <button key={index} className={styles}>{key}</button>
+              return <button key={index} className={styles} onClick={onClick}>
+                {key}
+              </button>
             })}
           </div>
         )

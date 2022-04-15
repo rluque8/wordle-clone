@@ -6,9 +6,9 @@ import WordRow from './WordRow';
 
 export default function App() {
   const state = useStore();
-  const [guess, setGuess] = useGuess();
-  const [showInvalidGuess, setInvalidGuess]  = useState(false);
-  const addGuess =  useStore(s => s.addGuess);
+  const [guess, setGuess, addGuessLetter] = useGuess();
+  const [showInvalidGuess, setInvalidGuess] = useState(false);
+  const addGuess = useStore(s => s.addGuess);
   const previousGuess = usePrevious(guess);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function App() {
 
     return () => clearTimeout(id);
   }, [guess]);
-  
+
   useEffect(() => {
     if (guess.length === 0 && previousGuess?.length === LETTER_LENGTH) {
       if (isValidWord(previousGuess)) {
@@ -52,12 +52,14 @@ export default function App() {
         <h1 className="text-4xl text-center">Cifras</h1>
       </header>
 
-      <Keyboard />
+      <Keyboard onClick={letter => {
+        addGuessLetter(letter);
+      }} />
 
       <main className='grid grid-rows-6 gap-4'>
         {rows.map(({ guess, result }, index) => {
           <WordRow key={index} letters={guess} result={result}
-            className ={showInvalidGuess && currentRow === index ? 'animate-bounce' : ''}
+            className={showInvalidGuess && currentRow === index ? 'animate-bounce' : ''}
           />
         })}
       </main>
@@ -66,7 +68,7 @@ export default function App() {
         <div role="modal" className='absolute bg-white left-0 right-0 top-1/4 p-6
           w-3/4 mx-auto rounded border border-gray-500  text-center'>
           Game Over!
-          <WordRow letters={state.answer}/>
+          <WordRow letters={state.answer} />
 
           <button className="block border rounded border-green-500 bg-green-500 p-2 mt-4 mx-auto shadow"
             onClick={() => {
@@ -81,11 +83,10 @@ export default function App() {
   )
 }
 
-function useGuess(): [string, React.Dispatch<React.SetStateAction<string>>] {
+function useGuess(): [string, React.Dispatch<React.SetStateAction<string>>, (letter: string) => void] {
   const [guess, setGuess] = useState('');
 
-  const onKeyDown = (event: KeyboardEvent) => {
-    let letter = event.key;
+  const addGuessLetter = (letter: string) => {
     setGuess((currentGuess) => {
       const newGuess = letter.length === 1 ? currentGuess + letter : currentGuess;
 
@@ -95,10 +96,8 @@ function useGuess(): [string, React.Dispatch<React.SetStateAction<string>>] {
         }
         case 'Enter': {
           if (newGuess.length === LETTER_LENGTH) {
-            addGuess(newGuess);
             return '';
           }
-          return newGuess.slice(0, -1);
         }
       }
 
@@ -108,6 +107,12 @@ function useGuess(): [string, React.Dispatch<React.SetStateAction<string>>] {
 
       return newGuess;
     });
+
+  }
+
+  const onKeyDown = (event: KeyboardEvent) => {
+    let letter = event.key;
+    addGuessLetter(letter);
   }
 
   useEffect(() => {
@@ -115,9 +120,9 @@ function useGuess(): [string, React.Dispatch<React.SetStateAction<string>>] {
     return () => {
       document.removeEventListener('keydown', onKeyDown);
     }
-  },[]);
+  }, []);
 
-  return [guess, setGuess];
+  return [guess, setGuess, addGuessLetter];
 }
 
 function usePrevious<T>(value: T): T {
