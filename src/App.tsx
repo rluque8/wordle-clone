@@ -52,17 +52,17 @@ export default function App() {
         <h1 className="text-4xl text-center">Cifras</h1>
       </header>
 
-      <Keyboard onClick={letter => {
-        addGuessLetter(letter);
-      }} />
-
-      <main className='grid grid-rows-6 gap-4'>
+      <main className='grid grid-rows-6 gap-4 mb-4'>
         {rows.map(({ guess, result }, index) => {
           <WordRow key={index} letters={guess} result={result}
             className={showInvalidGuess && currentRow === index ? 'animate-bounce' : ''}
           />
         })}
       </main>
+
+      <Keyboard onClick={letter => {
+        addGuessLetter(letter);
+      }} />
 
       {isGameOver && (
         <div role="modal" className='absolute bg-white left-0 right-0 top-1/4 p-6
