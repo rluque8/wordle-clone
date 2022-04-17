@@ -1,6 +1,6 @@
 # Wordle-Clone
 
-This is. a clone of the game Wordle using React with Tailwindand Vite.js.
+This is a clone of the game [Wordle](https://www.nytimes.com/games/wordle/index.html) using React with Tailwindand Vite.js.
 
 
 ## Setup
