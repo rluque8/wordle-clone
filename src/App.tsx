@@ -18,19 +18,21 @@ export default function App() {
     }
 
     return () => clearTimeout(id);
-  }, [guess]);
+  }, [showInvalidGuess]);
 
   useEffect(() => {
     if (guess.length === 0 && previousGuess?.length === LETTER_LENGTH) {
       if (isValidWord(previousGuess)) {
-        addGuess(previousGuess);
         setInvalidGuess(false);
+        addGuess(previousGuess);
       } else {
         setInvalidGuess(true);
         setGuess(previousGuess);
       }
     }
   }, [guess]);
+
+  const isGameOver = state.gameState !== 'playing';
 
   let rows = [...state.rows];
 
@@ -41,10 +43,9 @@ export default function App() {
 
   const numberOfGuessesRemaining = GUESS_LENGTH - rows.length;
 
-  const isGameOver = state.gameState !== 'playing';
-
   rows = rows.concat(Array(numberOfGuessesRemaining).fill(''));
 
+  console.log(rows);
 
   return (
     <div className='mx-auto w-96 relative'>
@@ -52,12 +53,17 @@ export default function App() {
         <h1 className="text-4xl text-center">Cifras</h1>
       </header>
 
-      <main className='grid grid-rows-6 gap-4 mb-4'>
-        {rows.map(({ guess, result }, index) => {
-          <WordRow key={index} letters={guess} result={result}
-            className={showInvalidGuess && currentRow === index ? 'animate-bounce' : ''}
+      <main className="grid grid-rows-6 gap-4 my-4">
+        {rows.map((word, index) => (
+          <WordRow
+            key={index}
+            letters={word.guess}
+            result={word.result}
+            className={
+              showInvalidGuess && index === currentRow ? 'animate-bounce' : ''
+            }
           />
-        })}
+        ))}
       </main>
 
       <Keyboard onClick={letter => {
