@@ -6,15 +6,15 @@ interface WordRowProps {
   className?: string;
 }
 
-export default function WordRow({ letters: lettersProp = '', result = [], className = '' }: WordRowProps) {
-  const lettersRemaining = LETTER_LENGTH - lettersProp.length;
+export default function WordRow({ letters = '', result = [], className = '' }: WordRowProps) {
+  const lettersRemaining = LETTER_LENGTH - letters.length;
 
   // If we only have written 3 letters, the remaining 2 will be filled with '' in the array
-  const letters: string[] = lettersProp.split('').concat(Array(lettersRemaining)).fill('');
-  
+  const word: string[] = letters.split('').concat(Array(lettersRemaining).fill(''));
+
   return (
     <div className={`grid grid-cols-5 gap-4 ${className}`}>
-      {letters.map((char, index) => (
+      {word.map((char, index) => (
         <CharacterBox key={index} value={char} state={result[index]} />
       ))}
     </div>

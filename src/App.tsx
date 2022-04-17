@@ -8,8 +8,6 @@ export default function App() {
   const state = useStore();
   const [guess, setGuess, addGuessLetter] = useGuess();
   const [showInvalidGuess, setInvalidGuess] = useState(false);
-  const addGuess = useStore(s => s.addGuess);
-  const previousGuess = usePrevious(guess);
 
   useEffect(() => {
     let id: any;
@@ -19,6 +17,10 @@ export default function App() {
 
     return () => clearTimeout(id);
   }, [showInvalidGuess]);
+
+  const addGuess = useStore(s => s.addGuess);
+  const previousGuess = usePrevious(guess);
+
 
   useEffect(() => {
     if (guess.length === 0 && previousGuess?.length === LETTER_LENGTH) {
@@ -45,8 +47,6 @@ export default function App() {
 
   rows = rows.concat(Array(numberOfGuessesRemaining).fill(''));
 
-  console.log(rows);
-
   return (
     <div className='mx-auto w-96 relative'>
       <header className='border-b border-gray-500 pb-2 my-2'>
@@ -54,16 +54,18 @@ export default function App() {
       </header>
 
       <main className="grid grid-rows-6 gap-4 my-4">
-        {rows.map((word, index) => (
-          <WordRow
-            key={index}
-            letters={word.guess}
-            result={word.result}
-            className={
-              showInvalidGuess && index === currentRow ? 'animate-bounce' : ''
-            }
-          />
-        ))}
+        {rows.map((word, index) => {
+          return (
+            <WordRow
+              key={index}
+              letters={word.guess}
+              result={word.result}
+              className={
+                showInvalidGuess && index === currentRow ? 'animate-bounce' : ''
+              }
+            />
+          )
+        })}
       </main>
 
       <Keyboard onClick={letter => {
@@ -93,22 +95,23 @@ function useGuess(): [string, React.Dispatch<React.SetStateAction<string>>, (let
   const [guess, setGuess] = useState('');
 
   const addGuessLetter = (letter: string) => {
-    setGuess((currentGuess) => {
-      const newGuess = letter.length === 1 ? currentGuess + letter : currentGuess;
+    setGuess((curGuess) => {
+      const newGuess =
+        letter.length === 1 && curGuess.length !== LETTER_LENGTH
+          ? curGuess + letter
+          : curGuess;
 
       switch (letter) {
-        case 'Backspace': {
+        case 'Backspace':
           return newGuess.slice(0, -1);
-        }
-        case 'Enter': {
+        case 'Enter':
           if (newGuess.length === LETTER_LENGTH) {
             return '';
           }
-        }
       }
 
-      if (currentGuess.length === LETTER_LENGTH) {
-        return currentGuess;
+      if (newGuess.length === LETTER_LENGTH) {
+        return newGuess;
       }
 
       return newGuess;
